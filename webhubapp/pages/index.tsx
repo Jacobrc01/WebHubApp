@@ -418,7 +418,7 @@ useEffect(() => {
                   <div className="flex-1 min-w-0">
                     <p className="break-words">{p.content}</p>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
+                      {new Date(p.created_at).toLocaleString('da-DK')}
                     </div>
                   </div>
                   {role === 'tutor' && (
