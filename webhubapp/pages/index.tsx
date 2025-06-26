@@ -44,6 +44,7 @@ export default function Home() {
   const [posts, setPosts] = useState<Message[]>([]);
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
   // Realtime subscriptions - kun hvis bruger er logget ind
   useEffect(() => {
@@ -265,7 +266,10 @@ useEffect(() => {
 
   // Send nyt opslag - fjernet genindlæsning da realtime håndterer det
   const handlePost = async () => {
-    if (role !== 'tutor') return alert('Kun tutorer kan skrive opslag.');
+    if (role !== 'tutor') {
+      setMessage('Kun tutorer kan skrive opslag.');
+      return;
+    }
     const user = (await supabase.auth.getUser()).data.user!;
     
     const { error: insertError } = await supabase
@@ -308,12 +312,16 @@ useEffect(() => {
   // Toggle RSVP - fjern manuel opdatering
   const toggleRSVP = async (evId: string) => {
     if (role !== 'student') {
-      return alert('Kun studerende kan tilmelde sig events.');
+      setMessage('Kun studerende kan tilmelde sig events.');
+      return;
     }
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return alert('Log ind først');
+    if (!user) {
+      setMessage('Log ind først');
+      return;
+    }
 
     const existing = myRsvps.find((r) => r.event_id === evId);
     
@@ -345,7 +353,7 @@ useEffect(() => {
     <main className="min-h-screen w-full">
       <div className="container-responsive py-6 lg:py-8 space-y-8 lg:space-y-12">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-gray-200 dark:border-gray-700 gap-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">Velkommen til WebHubApp</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">Velkommen til ELCOS StudentHub</h1>
           {userEmail ? (
             <div className="flex items-center space-x-4">
               <span className="text-sm sm:text-base">
@@ -367,6 +375,11 @@ useEffect(() => {
             </button>
           )}
         </header>
+        {message && (
+          <div className="p-3 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+            {message}
+          </div>
+        )}
 
         {/* Tutor-knap */}
         {userEmail && role === 'tutor' && (
@@ -385,10 +398,11 @@ useEffect(() => {
             <h2 className="text-xl lg:text-2xl font-semibold">Opslagstavle</h2>
             {role === 'tutor' && (
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <input
+                <textarea
                   value={newPost}
                   onChange={e => setNewPost(e.target.value)}
                   placeholder="Skriv nyt opslag…"
+                  rows={3}
                   className="flex-1 p-3 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
                 />
                 <button
@@ -403,9 +417,9 @@ useEffect(() => {
               {posts.map(p => (
                 <div key={p.id} className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg flex justify-between bg-white dark:bg-gray-800 shadow-sm">
                   <div className="flex-1 min-w-0">
-                    <p className="break-words">{p.content}</p>
+                    <p className="break-words whitespace-pre-wrap">{p.content}</p>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
+                      {new Date(p.created_at).toLocaleString('da-DK')}
                     </div>
                   </div>
                   {role === 'tutor' && (
