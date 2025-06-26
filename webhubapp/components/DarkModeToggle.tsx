@@ -23,11 +23,10 @@ export default function DarkModeToggle() {
       localStorage.setItem('theme', 'light');
     }
   };
-
   return (
     <button
       onClick={toggle}
-      className="fixed bottom-4 right-4 rounded-full p-3 bg-gray-200 dark:bg-gray-700 shadow-md"
+      className="fixed bottom-4 right-4 z-50 rounded-full p-3 bg-gray-200 dark:bg-gray-700 shadow-lg hover:shadow-xl transition-all duration-200 border border-gray-300 dark:border-gray-600"
       aria-label="Toggle dark mode"
     >
       {isDark ? '☀️' : '🌙'}

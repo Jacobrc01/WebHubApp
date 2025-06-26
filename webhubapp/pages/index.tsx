@@ -49,10 +49,9 @@ export default function Home() {
     let eventsChannel: RealtimeChannel | null = null;
     let messagesChannel: RealtimeChannel | null = null;
     let rsvpsChannel: RealtimeChannel | null = null;
-    
-    const setupSubscriptions = async () => {
+      const setupSubscriptions = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) return;return;
 
       // Events realtime
       eventsChannel = supabase
@@ -131,16 +130,17 @@ export default function Home() {
               map[row.event_id] = (map[row.event_id] || 0) + 1;
             });
             setCounts(map);
-          }
-
-          // Opdater myRsvps for den aktuelle bruger
-          const { data: myUpdatedRsvps, error: myError } = await supabase
-            .from('rsvps')
-            .select('*')
-            .eq('user_id', user.id);
-          
-          if (!myError && myUpdatedRsvps) {
-            setMyRsvps(myUpdatedRsvps);
+          }          // Opdater myRsvps for den aktuelle bruger
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          if (currentUser) {
+            const { data: myUpdatedRsvps, error: myError } = await supabase
+              .from('rsvps')
+              .select('*')
+              .eq('user_id', currentUser.id);
+            
+            if (!myError && myUpdatedRsvps) {
+              setMyRsvps(myUpdatedRsvps);
+            }
           }
         })
         .subscribe();
@@ -160,8 +160,7 @@ export default function Home() {
     const init = async () => {
       const {
         data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+      } = await supabase.auth.getUser();      if (!user) {
         setLoading(false);
         return;
       }
@@ -328,10 +327,9 @@ useEffect(() => {
     router.push('/login');
   };
 
-  if (loading) return <p className="p-6">Henter data…</p>;
-
+  if (loading) return <p className="min-h-screen p-6">Henter data…</p>;
   return (
-    <main className="max-w-4xl mx-auto p-6 space-y-8">
+    <main className="min-h-screen max-w-4xl mx-auto p-6 space-y-8">
       <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
         <h1 className="text-2xl font-bold">Velkommen til WebHubApp</h1>
         {userEmail ? (

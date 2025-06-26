@@ -18,9 +18,8 @@ export default function LoginPage() {
       alert('Tjek din mail for login-link!');
     }
   };
-
   return (
-    <main className="flex items-center justify-center min-h-screen">
+    <main className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <form onSubmit={handleLogin} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded shadow-md">
         <input
           type="email"
