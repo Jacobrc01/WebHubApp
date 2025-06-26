@@ -329,133 +329,138 @@ useEffect(() => {
 
   if (loading) return <p className="min-h-screen p-6">Henter data…</p>;
   return (
-    <main className="min-h-screen max-w-4xl mx-auto p-8 md:p-12 space-y-16">
-      <header className="flex items-center justify-between pb-6 mb-8 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Velkommen til WebHubApp</h1>
-        {userEmail ? (
-          <div className="flex items-center space-x-4">
-            <span>
-              <strong>{userEmail}</strong>
-            </span>
+    <main className="min-h-screen w-full">
+      <div className="container-responsive py-6 lg:py-8 space-y-8 lg:space-y-12">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-gray-200 dark:border-gray-700 gap-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight">Velkommen til WebHubApp</h1>
+          {userEmail ? (
+            <div className="flex items-center space-x-4">
+              <span className="text-sm sm:text-base">
+                <strong>{userEmail}</strong>
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors text-sm sm:text-base"
+              >
+                Log ud
+              </button>
+            </div>
+          ) : (
             <button
-              onClick={handleLogout}
-              className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
+              onClick={() => router.push('/login')}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm sm:text-base"
             >
-              Log ud
+              Log ind
             </button>
-          </div>
-        ) : (
+          )}
+        </header>
+
+        {/* Tutor-knap */}
+        {userEmail && role === 'tutor' && (
           <button
-            onClick={() => router.push('/login')}
-            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            onClick={() => router.push('/create-event')}
+            className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors shadow"
           >
-            Log ind
+            Opret nyt event
           </button>
         )}
-      </header>
 
-      {/* Tutor-knap */}
-      {userEmail && role === 'tutor' && (
-        <button
-          onClick={() => router.push('/create-event')}
-          className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors shadow"
-        >
-          Opret nyt event
-        </button>
-      )}
-
-      {/* Opslagstavle */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold">Opslagstavle</h2>
-        {role === 'tutor' && (
-          <div className="flex space-x-2">
-            <input
-              value={newPost}
-              onChange={e => setNewPost(e.target.value)}
-              placeholder="Skriv nyt opslag…"
-              className="flex-1 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
-            />
-            <button
-              onClick={handlePost}
-              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
-            >
-              Opret opslag
-            </button>
-          </div>
-        )}
-        <ul className="space-y-2">
-          {posts.map(p => (
-            <li key={p.id} className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg flex justify-between bg-white dark:bg-gray-800 shadow-sm">
-              <div>
-                <p>{p.content}</p>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
-                </div>
-              </div>
-              {role === 'tutor' && (
+        {/* Main content grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
+          {/* Opslagstavle */}
+          <section className="space-y-6">
+            <h2 className="text-xl lg:text-2xl font-semibold">Opslagstavle</h2>
+            {role === 'tutor' && (
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <input
+                  value={newPost}
+                  onChange={e => setNewPost(e.target.value)}
+                  placeholder="Skriv nyt opslag…"
+                  className="flex-1 p-3 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
+                />
                 <button
-                  onClick={() => handleDelete(p.id)}
-                  className="text-red-600 hover:underline text-sm"
+                  onClick={handlePost}
+                  className="px-4 py-3 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors whitespace-nowrap"
                 >
-                  Slet
+                  Opret opslag
                 </button>
-              )}
-            </li>
-          ))}
-          {posts.length === 0 && <p className="text-gray-500 dark:text-gray-400">Ingen opslag endnu.</p>}
-        </ul>
-      </section>
-
-      {/* Event-feed */}
-      <section className="space-y-6">
-        <h2 className="text-2xl font-semibold">Kommende events</h2>
-        {events.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">Ingen planlagte events lige nu.</p>
-        ) : (
-          <ul className="space-y-4">
-            {events.map((ev) => {
-              const going = myRsvps.some((r) => r.event_id === ev.id);
-              return (
-                <li
-                  key={ev.id}
-                  className="border border-gray-200 dark:border-gray-700 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition"
-                >
-                  <h3 className="text-xl font-semibold">{ev.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
-                    🗓️ {new Date(ev.start_time).toLocaleString('da-DK')}
-                    {ev.location && ` · 📍 ${ev.location}`}
-                  </p>
-                  {ev.description && <p className="mt-2">{ev.description}</p>}
-                  {userEmail && (
-                    <div className="mt-3 flex items-center space-x-3">
-                      <button
-                        onClick={() => toggleRSVP(ev.id)}
-                        className={`px-3 py-1 rounded ${
-                          role !== 'student'
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : going
-                            ? 'bg-red-500 hover:bg-red-600'
-                            : 'bg-blue-500 hover:bg-blue-600'
-                        } text-white`}
-                        disabled={role !== 'student'}
-                      >
-                        {role !== 'student'
-                          ? 'Ikke tilladt'
-                          : going
-                          ? 'Afmeld'
-                          : 'Tilmeld'}
-                      </button>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {counts[ev.id] ?? 0} tilmeldt
-                      </span>
+              </div>
+            )}
+            <div className="space-y-3 max-h-96 lg:max-h-[500px] overflow-y-auto">
+              {posts.map(p => (
+                <div key={p.id} className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg flex justify-between bg-white dark:bg-gray-800 shadow-sm">
+                  <div className="flex-1 min-w-0">
+                    <p className="break-words">{p.content}</p>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
                     </div>
+                  </div>
+                  {role === 'tutor' && (
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      className="text-red-600 hover:underline text-sm ml-4 flex-shrink-0"
+                    >
+                      Slet
+                    </button>
                   )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+                </div>
+              ))}
+              {posts.length === 0 && <p className="text-gray-500 dark:text-gray-400">Ingen opslag endnu.</p>}
+            </div>
+          </section>
+
+          {/* Event-feed */}
+          <section className="space-y-6">
+            <h2 className="text-xl lg:text-2xl font-semibold">Kommende events</h2>
+            {events.length === 0 ? (
+              <p className="text-gray-500 dark:text-gray-400">Ingen planlagte events lige nu.</p>
+            ) : (
+              <div className="space-y-4 max-h-96 lg:max-h-[500px] overflow-y-auto">
+                {events.map((ev) => {
+                  const going = myRsvps.some((r) => r.event_id === ev.id);
+                  return (
+                    <div
+                      key={ev.id}
+                      className="border border-gray-200 dark:border-gray-700 p-4 lg:p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition"
+                    >
+                      <h3 className="text-lg lg:text-xl font-semibold">{ev.title}</h3>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
+                        🗓️ {new Date(ev.start_time).toLocaleString('da-DK')}
+                        {ev.location && ` · 📍 ${ev.location}`}
+                      </p>
+                      {ev.description && <p className="mt-2 text-sm lg:text-base">{ev.description}</p>}
+                      {userEmail && (
+                        <div className="mt-3 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                          <button
+                            onClick={() => toggleRSVP(ev.id)}
+                            className={`px-3 py-1 rounded text-sm ${
+                              role !== 'student'
+                                ? 'bg-gray-400 cursor-not-allowed'
+                                : going
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-blue-500 hover:bg-blue-600'
+                            } text-white`}
+                            disabled={role !== 'student'}
+                          >
+                            {role !== 'student'
+                              ? 'Ikke tilladt'
+                              : going
+                              ? 'Afmeld'
+                              : 'Tilmeld'}
+                          </button>
+                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                            {counts[ev.id] ?? 0} tilmeldt
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
     </main>
   );
 }
