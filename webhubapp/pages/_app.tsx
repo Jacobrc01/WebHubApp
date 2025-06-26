@@ -3,7 +3,6 @@ import type { AppProps } from 'next/app';
 import { useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
-import DarkModeToggle from '../components/DarkModeToggle';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -60,12 +59,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
-  return (
-    <>
-      <Component {...pageProps} />
-      <DarkModeToggle />
-    </>
-  );
+  return <Component {...pageProps} />;
 }
 
 export default MyApp;
