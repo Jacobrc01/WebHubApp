@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import Landing from '../components/Landing';
 
 type Event = {
   id: string;
@@ -339,6 +340,7 @@ useEffect(() => {
   };
 
   if (loading) return <p className="min-h-screen p-6">Henter data…</p>;
+  if (!userEmail) return <Landing />;
   return (
     <main className="min-h-screen w-full">
       <div className="container-responsive py-6 lg:py-8 space-y-8 lg:space-y-12">
