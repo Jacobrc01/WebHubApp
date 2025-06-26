@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 type Event = {
   id: string;
@@ -25,6 +26,14 @@ type Message = {
   user_email?: string;
 };
 
+type MessageWithUsers = {
+  id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  users: { email: string }[] | null;
+};
+
 export default function Home() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -35,16 +44,14 @@ export default function Home() {
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
   // Realtime subscriptions - kun hvis bruger er logget ind
   useEffect(() => {
-    let eventsChannel: any;
-    let messagesChannel: any;
-    let rsvpsChannel: any;
-    
-    const setupSubscriptions = async () => {
+    let eventsChannel: RealtimeChannel | null = null;
+    let messagesChannel: RealtimeChannel | null = null;
+    let rsvpsChannel: RealtimeChannel | null = null;
+      const setupSubscriptions = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) return;return;
 
       // Events realtime
       eventsChannel = supabase
@@ -117,23 +124,23 @@ export default function Home() {
           const { data: allRsvps, error: countError } = await supabase
             .from('rsvps')
             .select('event_id');
-          
-          if (!countError && allRsvps) {
+            if (!countError && allRsvps) {
             const map: Record<string, number> = {};
-            allRsvps.forEach((row: any) => {
+            allRsvps.forEach((row: { event_id: string }) => {
               map[row.event_id] = (map[row.event_id] || 0) + 1;
             });
             setCounts(map);
-          }
-
-          // Opdater myRsvps for den aktuelle bruger
-          const { data: myUpdatedRsvps, error: myError } = await supabase
-            .from('rsvps')
-            .select('*')
-            .eq('user_id', user.id);
-          
-          if (!myError && myUpdatedRsvps) {
-            setMyRsvps(myUpdatedRsvps);
+          }          // Opdater myRsvps for den aktuelle bruger
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          if (currentUser) {
+            const { data: myUpdatedRsvps, error: myError } = await supabase
+              .from('rsvps')
+              .select('*')
+              .eq('user_id', currentUser.id);
+            
+            if (!myError && myUpdatedRsvps) {
+              setMyRsvps(myUpdatedRsvps);
+            }
           }
         })
         .subscribe();
@@ -153,8 +160,7 @@ export default function Home() {
     const init = async () => {
       const {
         data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
+      } = await supabase.auth.getUser();      if (!user) {
         setLoading(false);
         return;
       }
@@ -240,9 +246,8 @@ useEffect(() => {
     if (error) {
       console.error('Fejl ved hentning af opslag:', error.message);
       return;
-    }
-    setPosts(
-      (data || []).map((p: any) => ({
+    }    setPosts(
+      (data || []).map((p: MessageWithUsers) => ({
         id: p.id,
         author_id: p.author_id,
         content: p.content,
@@ -322,11 +327,10 @@ useEffect(() => {
     router.push('/login');
   };
 
-  if (loading) return <p className="p-6">Henter data…</p>;
-
+  if (loading) return <p className="min-h-screen p-6">Henter data…</p>;
   return (
-    <main className="p-6 space-y-8">
-      <header className="flex items-center justify-between">
+    <main className="min-h-screen max-w-4xl mx-auto p-6 space-y-8">
+      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
         <h1 className="text-2xl font-bold">Velkommen til WebHubApp</h1>
         {userEmail ? (
           <div className="flex items-center space-x-4">
@@ -335,7 +339,7 @@ useEffect(() => {
             </span>
             <button
               onClick={handleLogout}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+              className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
             >
               Log ud
             </button>
@@ -343,7 +347,7 @@ useEffect(() => {
         ) : (
           <button
             onClick={() => router.push('/login')}
-            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             Log ind
           </button>
@@ -354,7 +358,7 @@ useEffect(() => {
       {userEmail && role === 'tutor' && (
         <button
           onClick={() => router.push('/create-event')}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
         >
           Opret nyt event
         </button>
@@ -369,11 +373,11 @@ useEffect(() => {
               value={newPost}
               onChange={e => setNewPost(e.target.value)}
               placeholder="Skriv nyt opslag…"
-              className="flex-1 p-2 border rounded"
+              className="flex-1 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
             />
             <button
               onClick={handlePost}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
             >
               Opret opslag
             </button>
@@ -381,10 +385,10 @@ useEffect(() => {
         )}
         <ul className="space-y-2">
           {posts.map(p => (
-            <li key={p.id} className="border p-3 rounded flex justify-between">
+            <li key={p.id} className="border border-gray-200 dark:border-gray-700 p-3 rounded flex justify-between bg-white dark:bg-gray-800">
               <div>
                 <p>{p.content}</p>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
                 </div>
               </div>
@@ -398,7 +402,7 @@ useEffect(() => {
               )}
             </li>
           ))}
-          {posts.length === 0 && <p className="text-gray-500">Ingen opslag endnu.</p>}
+          {posts.length === 0 && <p className="text-gray-500 dark:text-gray-400">Ingen opslag endnu.</p>}
         </ul>
       </section>
 
@@ -406,7 +410,7 @@ useEffect(() => {
       <section>
         <h2 className="text-xl font-semibold mb-4">Kommende events</h2>
         {events.length === 0 ? (
-          <p className="text-gray-500">Ingen planlagte events lige nu.</p>
+          <p className="text-gray-500 dark:text-gray-400">Ingen planlagte events lige nu.</p>
         ) : (
           <ul className="space-y-4">
             {events.map((ev) => {
@@ -414,10 +418,10 @@ useEffect(() => {
               return (
                 <li
                   key={ev.id}
-                  className="border p-4 rounded-lg hover:shadow-md transition"
+                  className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition bg-white dark:bg-gray-800"
                 >
                   <h3 className="text-lg font-bold">{ev.title}</h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
                     🗓️ {new Date(ev.start_time).toLocaleString('da-DK')}
                     {ev.location && ` · 📍 ${ev.location}`}
                   </p>
@@ -441,7 +445,7 @@ useEffect(() => {
                           ? 'Afmeld'
                           : 'Tilmeld'}
                       </button>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {counts[ev.id] ?? 0} tilmeldt
                       </span>
                     </div>

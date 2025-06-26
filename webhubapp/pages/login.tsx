@@ -18,22 +18,21 @@ export default function LoginPage() {
       alert('Tjek din mail for login-link!');
     }
   };
-
   return (
-    <main className="flex items-center justify-center min-h-screen">
-      <form onSubmit={handleLogin} className="space-y-4">
+    <main className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+      <form onSubmit={handleLogin} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded shadow-md">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Din e-mail"
           required
-          className="p-2 border rounded"
+          className="w-full p-2 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700"
         />
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700 disabled:opacity-50"
+          className="w-full px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
         >
           Send login-link
         </button>
