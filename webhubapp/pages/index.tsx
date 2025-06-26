@@ -51,7 +51,7 @@ export default function Home() {
     let rsvpsChannel: RealtimeChannel | null = null;
       const setupSubscriptions = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;return;
+      if (!user) return;
 
       // Events realtime
       eventsChannel = supabase
@@ -293,6 +293,17 @@ useEffect(() => {
     // Realtime subscription håndterer fjernelse fra posts
   };
 
+  // Slet event - realtime håndterer opdatering
+  const handleDeleteEvent = async (id: string) => {
+    if (role !== 'tutor') return;
+    const { error } = await supabase
+      .from('events')
+      .delete()
+      .eq('id', id);
+    if (error) console.error('Fejl ved sletning af event:', error.message);
+    // Realtime subscription håndterer fjernelse fra events
+  };
+
   // Toggle RSVP - fjern manuel opdatering
   const toggleRSVP = async (evId: string) => {
     if (role !== 'student') {
@@ -451,6 +462,14 @@ useEffect(() => {
                           <span className="text-sm text-gray-500 dark:text-gray-400">
                             {counts[ev.id] ?? 0} tilmeldt
                           </span>
+                          {role === 'tutor' && (
+                            <button
+                              onClick={() => handleDeleteEvent(ev.id)}
+                              className="text-red-600 hover:underline text-sm"
+                            >
+                              Slet
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>
