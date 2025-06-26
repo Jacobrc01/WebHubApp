@@ -44,6 +44,7 @@ export default function Home() {
   const [posts, setPosts] = useState<Message[]>([]);
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
   // Realtime subscriptions - kun hvis bruger er logget ind
   useEffect(() => {
@@ -265,7 +266,10 @@ useEffect(() => {
 
   // Send nyt opslag - fjernet genindlæsning da realtime håndterer det
   const handlePost = async () => {
-    if (role !== 'tutor') return alert('Kun tutorer kan skrive opslag.');
+    if (role !== 'tutor') {
+      setMessage('Kun tutorer kan skrive opslag.');
+      return;
+    }
     const user = (await supabase.auth.getUser()).data.user!;
     
     const { error: insertError } = await supabase
@@ -308,12 +312,16 @@ useEffect(() => {
   // Toggle RSVP - fjern manuel opdatering
   const toggleRSVP = async (evId: string) => {
     if (role !== 'student') {
-      return alert('Kun studerende kan tilmelde sig events.');
+      setMessage('Kun studerende kan tilmelde sig events.');
+      return;
     }
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return alert('Log ind først');
+    if (!user) {
+      setMessage('Log ind først');
+      return;
+    }
 
     const existing = myRsvps.find((r) => r.event_id === evId);
     
@@ -367,6 +375,11 @@ useEffect(() => {
             </button>
           )}
         </header>
+        {message && (
+          <div className="p-3 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+            {message}
+          </div>
+        )}
 
         {/* Tutor-knap */}
         {userEmail && role === 'tutor' && (

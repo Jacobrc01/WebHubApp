@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 export default function CreateEventPage() {
   const [loading, setLoading] = useState(true);
   const [allowed, setAllowed] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -49,10 +50,10 @@ export default function CreateEventPage() {
       created_by: user?.id,
     });
 
-    if (error) alert('Fejl: ' + error.message);
+    if (error) setMessage('Fejl: ' + error.message);
     else {
-      alert('Event oprettet!');
-      router.push('/');
+      setMessage('Event oprettet!');
+      setTimeout(() => router.push('/'), 2000);
     }
   };
   if (loading) return <p className="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">Tjekker tilladelser…</p>;
@@ -96,6 +97,11 @@ export default function CreateEventPage() {
               Opret event
             </button>
           </form>
+          {message && (
+            <p className="text-center text-sm text-blue-600 dark:text-blue-400">
+              {message}
+            </p>
+          )}
         </div>
       </div>
     </main>
