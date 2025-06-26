@@ -19,9 +19,7 @@ export default function CreateEventPage() {
         .from('users')
         .select('role')
         .eq('id', user.id)
-        .single();
-
-      if (userData?.role === 'tutor') {
+        .single();      if (userData?.role === 'tutor') {
         setAllowed(true);
       } else {
         router.push('/');
@@ -31,7 +29,7 @@ export default function CreateEventPage() {
     };
 
     checkRole();
-  }, []);
+  }, [router]);
 
   // Formular og opret-funktion…
   const [title, setTitle] = useState('');
@@ -57,47 +55,49 @@ export default function CreateEventPage() {
       router.push('/');
     }
   };
-
-  if (loading) return <p className="p-4">Tjekker tilladelser…</p>;
+  if (loading) return <p className="min-h-screen p-4 bg-gray-50 dark:bg-gray-900">Tjekker tilladelser…</p>;
   if (!allowed) return null;
-
   return (
-    <main className="max-w-xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6">Opret nyt event</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          className="w-full p-2 border rounded"
-          placeholder="Titel"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <textarea
-          className="w-full p-2 border rounded"
-          placeholder="Beskrivelse"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          className="w-full p-2 border rounded"
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
-        <input
-          className="w-full p-2 border rounded"
-          placeholder="Sted"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Opret event
-        </button>
-      </form>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 lg:py-10">
+      <div className="container-responsive">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold">Opret nyt event</h1>
+          <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg">
+            <input
+              className="w-full p-3 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700 text-sm sm:text-base"
+              placeholder="Titel"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            <textarea
+              className="w-full p-3 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700 text-sm sm:text-base min-h-24"
+              placeholder="Beskrivelse"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+              className="w-full p-3 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700 text-sm sm:text-base"
+              type="datetime-local"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            />
+            <input
+              className="w-full p-3 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700 text-sm sm:text-base"
+              placeholder="Sted"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-6 py-3 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors shadow text-sm sm:text-base"
+            >
+              Opret event
+            </button>
+          </form>
+        </div>
+      </div>
     </main>
   );
 }
