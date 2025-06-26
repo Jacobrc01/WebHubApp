@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,9 +14,9 @@ export default function LoginPage() {
     setLoading(false);
 
     if (error) {
-      alert('Noget gik galt: ' + error.message);
+      setMessage('Noget gik galt: ' + error.message);
     } else {
-      alert('Tjek din mail for login-link!');
+      setMessage('Tjek din mail for login-link!');
     }
   };
   return (
@@ -39,6 +40,11 @@ export default function LoginPage() {
             Send login-link
           </button>
         </form>
+        {message && (
+          <p className="text-center text-sm text-blue-600 dark:text-blue-400">
+            {message}
+          </p>
+        )}
       </div>
     </main>
   );
