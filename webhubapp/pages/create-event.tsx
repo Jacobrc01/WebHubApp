@@ -20,7 +20,8 @@ export default function CreateEventPage() {
         .from('users')
         .select('role')
         .eq('id', user.id)
-        .single();      if (userData?.role === 'tutor') {
+        .single();
+      if (userData?.role === 'tutor') {
         setAllowed(true);
       } else {
         router.push('/');

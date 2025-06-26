@@ -17,7 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         if (error) {
           console.error('Fejl ved exchangeCodeForSession:', error.message);
         } else {
-          console.log('Session hentet fra URL');
           window.history.replaceState({}, document.title, window.location.pathname);
         }
       });
