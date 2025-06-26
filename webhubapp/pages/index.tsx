@@ -325,8 +325,8 @@ useEffect(() => {
   if (loading) return <p className="p-6">Henter data…</p>;
 
   return (
-    <main className="p-6 space-y-8">
-      <header className="flex items-center justify-between">
+    <main className="max-w-4xl mx-auto p-6 space-y-8">
+      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
         <h1 className="text-2xl font-bold">Velkommen til WebHubApp</h1>
         {userEmail ? (
           <div className="flex items-center space-x-4">
@@ -335,7 +335,7 @@ useEffect(() => {
             </span>
             <button
               onClick={handleLogout}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+              className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
             >
               Log ud
             </button>
@@ -343,7 +343,7 @@ useEffect(() => {
         ) : (
           <button
             onClick={() => router.push('/login')}
-            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
             Log ind
           </button>
@@ -354,7 +354,7 @@ useEffect(() => {
       {userEmail && role === 'tutor' && (
         <button
           onClick={() => router.push('/create-event')}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
         >
           Opret nyt event
         </button>
@@ -369,11 +369,11 @@ useEffect(() => {
               value={newPost}
               onChange={e => setNewPost(e.target.value)}
               placeholder="Skriv nyt opslag…"
-              className="flex-1 p-2 border rounded"
+              className="flex-1 p-2 border rounded bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
             />
             <button
               onClick={handlePost}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
             >
               Opret opslag
             </button>
@@ -381,10 +381,10 @@ useEffect(() => {
         )}
         <ul className="space-y-2">
           {posts.map(p => (
-            <li key={p.id} className="border p-3 rounded flex justify-between">
+            <li key={p.id} className="border border-gray-200 dark:border-gray-700 p-3 rounded flex justify-between bg-white dark:bg-gray-800">
               <div>
                 <p>{p.content}</p>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
                   {new Date(p.created_at).toLocaleString('da-DK')} — {p.user_email}
                 </div>
               </div>
@@ -398,7 +398,7 @@ useEffect(() => {
               )}
             </li>
           ))}
-          {posts.length === 0 && <p className="text-gray-500">Ingen opslag endnu.</p>}
+          {posts.length === 0 && <p className="text-gray-500 dark:text-gray-400">Ingen opslag endnu.</p>}
         </ul>
       </section>
 
@@ -406,7 +406,7 @@ useEffect(() => {
       <section>
         <h2 className="text-xl font-semibold mb-4">Kommende events</h2>
         {events.length === 0 ? (
-          <p className="text-gray-500">Ingen planlagte events lige nu.</p>
+          <p className="text-gray-500 dark:text-gray-400">Ingen planlagte events lige nu.</p>
         ) : (
           <ul className="space-y-4">
             {events.map((ev) => {
@@ -414,10 +414,10 @@ useEffect(() => {
               return (
                 <li
                   key={ev.id}
-                  className="border p-4 rounded-lg hover:shadow-md transition"
+                  className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition bg-white dark:bg-gray-800"
                 >
                   <h3 className="text-lg font-bold">{ev.title}</h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
                     🗓️ {new Date(ev.start_time).toLocaleString('da-DK')}
                     {ev.location && ` · 📍 ${ev.location}`}
                   </p>
@@ -441,7 +441,7 @@ useEffect(() => {
                           ? 'Afmeld'
                           : 'Tilmeld'}
                       </button>
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
                         {counts[ev.id] ?? 0} tilmeldt
                       </span>
                     </div>
