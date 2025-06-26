@@ -59,9 +59,9 @@ export default function CreateEventPage() {
   if (!allowed) return null;
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Opret nyt event</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded shadow-md">
+      <div className="max-w-xl mx-auto space-y-6">
+        <h1 className="text-3xl font-extrabold">Opret nyt event</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
           <input
             className="w-full p-2 border rounded bg-white dark:bg-gray-900/20 border-gray-300 dark:border-gray-700"
             placeholder="Titel"
@@ -90,7 +90,7 @@ export default function CreateEventPage() {
           />
           <button
             type="submit"
-            className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
+            className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors shadow"
           >
             Opret event
           </button>
