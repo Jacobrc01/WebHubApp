@@ -28,10 +28,8 @@ export default function CreateEventPage() {
       }
 
       setLoading(false);
-    };
-
-    checkRole();
-  }, []);
+    };    checkRole();
+  }, [router]);
 
   // Formular og opret-funktion…
   const [title, setTitle] = useState('');

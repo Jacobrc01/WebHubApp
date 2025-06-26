@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 type Event = {
   id: string;
@@ -25,6 +26,14 @@ type Message = {
   user_email?: string;
 };
 
+type MessageWithUsers = {
+  id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  users: { email: string }[] | null;
+};
+
 export default function Home() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -35,12 +44,11 @@ export default function Home() {
   const [newPost, setNewPost] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
   // Realtime subscriptions - kun hvis bruger er logget ind
   useEffect(() => {
-    let eventsChannel: any;
-    let messagesChannel: any;
-    let rsvpsChannel: any;
+    let eventsChannel: RealtimeChannel | null = null;
+    let messagesChannel: RealtimeChannel | null = null;
+    let rsvpsChannel: RealtimeChannel | null = null;
     
     const setupSubscriptions = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -117,10 +125,9 @@ export default function Home() {
           const { data: allRsvps, error: countError } = await supabase
             .from('rsvps')
             .select('event_id');
-          
-          if (!countError && allRsvps) {
+            if (!countError && allRsvps) {
             const map: Record<string, number> = {};
-            allRsvps.forEach((row: any) => {
+            allRsvps.forEach((row: { event_id: string }) => {
               map[row.event_id] = (map[row.event_id] || 0) + 1;
             });
             setCounts(map);
@@ -240,9 +247,8 @@ useEffect(() => {
     if (error) {
       console.error('Fejl ved hentning af opslag:', error.message);
       return;
-    }
-    setPosts(
-      (data || []).map((p: any) => ({
+    }    setPosts(
+      (data || []).map((p: MessageWithUsers) => ({
         id: p.id,
         author_id: p.author_id,
         content: p.content,
