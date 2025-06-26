@@ -329,9 +329,9 @@ useEffect(() => {
 
   if (loading) return <p className="min-h-screen p-6">Henter data…</p>;
   return (
-    <main className="min-h-screen max-w-4xl mx-auto p-6 space-y-8">
-      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
-        <h1 className="text-2xl font-bold">Velkommen til WebHubApp</h1>
+    <main className="min-h-screen max-w-4xl mx-auto p-8 md:p-12 space-y-16">
+      <header className="flex items-center justify-between pb-6 mb-8 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Velkommen til WebHubApp</h1>
         {userEmail ? (
           <div className="flex items-center space-x-4">
             <span>
@@ -358,15 +358,15 @@ useEffect(() => {
       {userEmail && role === 'tutor' && (
         <button
           onClick={() => router.push('/create-event')}
-          className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors"
+          className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors shadow"
         >
           Opret nyt event
         </button>
       )}
 
       {/* Opslagstavle */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Opslagstavle</h2>
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Opslagstavle</h2>
         {role === 'tutor' && (
           <div className="flex space-x-2">
             <input
@@ -385,7 +385,7 @@ useEffect(() => {
         )}
         <ul className="space-y-2">
           {posts.map(p => (
-            <li key={p.id} className="border border-gray-200 dark:border-gray-700 p-3 rounded flex justify-between bg-white dark:bg-gray-800">
+            <li key={p.id} className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg flex justify-between bg-white dark:bg-gray-800 shadow-sm">
               <div>
                 <p>{p.content}</p>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -407,8 +407,8 @@ useEffect(() => {
       </section>
 
       {/* Event-feed */}
-      <section>
-        <h2 className="text-xl font-semibold mb-4">Kommende events</h2>
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Kommende events</h2>
         {events.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400">Ingen planlagte events lige nu.</p>
         ) : (
@@ -418,10 +418,10 @@ useEffect(() => {
               return (
                 <li
                   key={ev.id}
-                  className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg hover:shadow-md transition bg-white dark:bg-gray-800"
+                  className="border border-gray-200 dark:border-gray-700 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition"
                 >
-                  <h3 className="text-lg font-bold">{ev.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  <h3 className="text-xl font-semibold">{ev.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">
                     🗓️ {new Date(ev.start_time).toLocaleString('da-DK')}
                     {ev.location && ` · 📍 ${ev.location}`}
                   </p>
@@ -445,7 +445,7 @@ useEffect(() => {
                           ? 'Afmeld'
                           : 'Tilmeld'}
                       </button>
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
                         {counts[ev.id] ?? 0} tilmeldt
                       </span>
                     </div>
